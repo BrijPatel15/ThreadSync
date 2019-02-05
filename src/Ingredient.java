@@ -1,3 +1,4 @@
+import java.util.Random;
 
 public enum Ingredient {
 	
@@ -12,6 +13,11 @@ public enum Ingredient {
 	@Override
 	public String toString() {
 		return this.name;
+	}
+	
+	public static Ingredient getRandom() {
+		Random random = new Random();
+		return values()[random.nextInt(values().length)];
 	}
 	
 }
