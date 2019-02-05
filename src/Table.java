@@ -3,63 +3,53 @@ import java.util.List;
 
 public class Table {
 	private List<Ingredient> ingredients = new ArrayList<>();
-	private boolean isPutting = false;
-	private boolean isTaking = false;
-	private boolean hasChefEaten = true;
-	private final int MAX_SIZE = 2;
-	public Table() {
-		super();
-	}
-	
-	public synchronized void putIngredients(List<Ingredient> aInIngredients) {
-		while(isPutting || !hasChefEaten) { //only put when someone is not putting or the table is empty
+	private boolean isEmpty = true;
+	private boolean readyToEat = false;
+
+	public synchronized void putIngredients(List<Ingredient> ingredients) {
+		while (!isEmpty) {
 			try {
 				wait();
 			} catch (InterruptedException e) {
-				System.out.println(e.getLocalizedMessage());
+				return;
 			}
 		}
-		isPutting = true;
-		hasChefEaten = false;
-		if (ingredients.size() < MAX_SIZE) {
-			ingredients.addAll(aInIngredients);
-		}
-		isPutting = false;
+		this.ingredients.addAll(ingredients);
+		isEmpty = false;
+		System.out.println(this.toString());
 		notifyAll();
 	}
-	
-	public synchronized List<Ingredient> getIngredients(){
-		while(isTaking || ingredients.isEmpty()) {// can only if someone is not taking and the table is "full"
+
+	public synchronized List<Ingredient> getIngredients() {
+		while (isEmpty && readyToEat) {
 			try {
 				wait();
 			} catch (InterruptedException e) {
-				System.out.println(e.getLocalizedMessage());
+				System.out.println("Error " + e.getLocalizedMessage());
 			}
 		}
-		
-		isTaking = false;
+		this.readyToEat = true;
+		List<Ingredient> tempIngredients = this.ingredients;
 		notifyAll();
-		
-		return ingredients;
+		return tempIngredients;
 	}
-	
-	public synchronized void eatIngredients() {
-		while((isTaking || isPutting || hasChefEaten) && ingredients.isEmpty()) {// When someone is not taking or putting and table is "full"
+
+	public synchronized void eat(Chef c) {
+		while (isEmpty || !readyToEat) {
 			try {
 				wait();
 			} catch (InterruptedException e) {
-				System.out.println(e.getLocalizedMessage());
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			isTaking = true;
-			isPutting = true;
-			hasChefEaten = true;
-			ingredients.clear();
-			isTaking = false;
-			isPutting = false;
-			notifyAll();
 		}
+		isEmpty = true;
+		readyToEat = false;
+		System.out.println(c.toString() + " ate " + this.toString());
+		this.ingredients.clear();
+		notifyAll();
 	}
-	
+
 	@Override
 	public String toString() {
 		return "Table has: " + ingredients.toString();
