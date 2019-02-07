@@ -20,14 +20,18 @@ public class Agent implements Runnable {
 	public void run() {
 		for(int i = 1; i <= numSandwiches; i++) {
 			List<Ingredient> tempList = getRandIngredients();
-			System.out.println(this.toString() + " COUNT: " + i + ": Putting: " + tempList.toString());
+			System.out.println(this.toString() + " Sandwich count: " + i + ": Putting: " + tempList.toString());
 			table.putIngredients(tempList);
 			try {
-				Thread.sleep(500);
+				Thread.sleep(500);// Made to make the output more readable
 			} catch (InterruptedException e) {
+				System.out.println("Agent sleep error " + e.getLocalizedMessage());
 			}
 		}
-
+		while (table.getIngredients().isEmpty()) {
+			System.out.println(numSandwiches + " sandwiches made Agent is done.");
+			System.exit(0);
+		}
 	}
 
 	private List<Ingredient> getRandIngredients(){
