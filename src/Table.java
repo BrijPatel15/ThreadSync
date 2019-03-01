@@ -39,8 +39,7 @@ public class Table {
 			try {
 				wait();
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println("Error " + e.getLocalizedMessage());
 			}
 		}
 		isEmpty = true;
@@ -53,6 +52,10 @@ public class Table {
 	@Override
 	public String toString() {
 		return "Table has: " + ingredients.toString();
+	}
+
+	public boolean isEmpty() {
+		return this.ingredients.isEmpty();
 	}
 
 }

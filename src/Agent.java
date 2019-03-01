@@ -8,6 +8,7 @@ public class Agent implements Runnable {
 	private int numSandwiches;
 	private int numIngredients;
 	private Table table;
+	private long startTime;
 
 	public Agent(String name, int numSandwiches, int numIngredients, Table table) {
 		this.name = name;
@@ -18,6 +19,7 @@ public class Agent implements Runnable {
 
 	@Override
 	public void run() {
+		startTime = System.nanoTime();
 		for(int i = 1; i <= numSandwiches; i++) {
 			List<Ingredient> tempList = getRandIngredients();
 			System.out.println(this.toString() + " Sandwich count: " + i + ": Putting: " + tempList.toString());
@@ -27,10 +29,6 @@ public class Agent implements Runnable {
 			} catch (InterruptedException e) {
 				System.out.println("Agent sleep error " + e.getLocalizedMessage());
 			}
-		}
-		while (table.getIngredients().isEmpty()) {
-			System.out.println(numSandwiches + " sandwiches made Agent is done.");
-			System.exit(0);
 		}
 	}
 
@@ -50,6 +48,10 @@ public class Agent implements Runnable {
 	@Override
 	public String toString() {
 		return "Agent " + name;
+	}
+
+	public long startTime() {
+		return this.startTime;
 	}
 
 }
